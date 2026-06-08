@@ -7,8 +7,12 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import HTMLResponse
 
+from ..core.config import load_config
+from ..pipeline import run_snapshot
 from ..storage import init_db
+from .dashboard import render_dashboard
 from .routes import router
 
 
@@ -30,7 +34,15 @@ app.include_router(router)
 
 @app.get("/")
 def root():
-    return {"index": "FreeGPMI", "docs": "/docs", "api": "/api/v1/index/latest"}
+    return {"index": "FreeGPMI", "dashboard": "/dashboard", "docs": "/docs",
+            "api": "/api/v1/index/latest"}
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard():
+    """Live HTML view of every source, the medians, FX and the index."""
+    result = run_snapshot(load_config(), persist=True)
+    return render_dashboard(result)
 
 
 @app.get("/health")

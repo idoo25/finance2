@@ -9,3 +9,6 @@ venv/
 *.sqlite
 *.sqlite3
 .DS_Store
+
+# generated dashboard preview
+dashboard_preview.html
