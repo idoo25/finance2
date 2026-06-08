@@ -1,0 +1,124 @@
+# FreeGPMI MVP universe: 14 physical assets that have at least 2-3 reasonable
+# free / publicly-accessible sources. Assets without enough independent free
+# feeds (lithium, uranium, soybeans, rice, nickel, ...) are intentionally
+# excluded until they meet the source-diversity rule.
+physical_assets:
+  - id: gold
+    name: Gold
+    symbol: Au
+    category: precious_metal
+    target_unit: USD_PER_TROY_OUNCE
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 1.5
+
+  - id: silver
+    name: Silver
+    symbol: Ag
+    category: precious_metal
+    target_unit: USD_PER_TROY_OUNCE
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 1.5
+
+  - id: platinum
+    name: Platinum
+    symbol: Pt
+    category: precious_metal
+    target_unit: USD_PER_TROY_OUNCE
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 2.0
+
+  - id: palladium
+    name: Palladium
+    symbol: Pd
+    category: precious_metal
+    target_unit: USD_PER_TROY_OUNCE
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 2.0
+
+  - id: copper
+    name: Copper
+    symbol: Cu
+    category: industrial_metal
+    target_unit: USD_PER_METRIC_TON
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 3.0
+
+  - id: aluminum
+    name: Aluminum
+    symbol: Al
+    category: industrial_metal
+    target_unit: USD_PER_METRIC_TON
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 3.0
+
+  - id: wti
+    name: WTI Crude Oil
+    category: energy
+    target_unit: USD_PER_BARREL
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 5.0
+
+  - id: brent
+    name: Brent Crude Oil
+    category: energy
+    target_unit: USD_PER_BARREL
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 5.0
+
+  - id: natural_gas
+    name: Natural Gas
+    category: energy
+    target_unit: USD_PER_MMBTU
+    min_sources: 2
+    max_staleness_minutes: 1440
+    outlier_threshold_pct: 5.0
+
+  - id: wheat
+    name: Wheat
+    category: agriculture
+    commodity: wheat
+    target_unit: USD_PER_METRIC_TON
+    min_sources: 2
+    max_staleness_minutes: 10080
+    outlier_threshold_pct: 7.0
+
+  - id: corn
+    name: Corn
+    category: agriculture
+    commodity: corn
+    target_unit: USD_PER_METRIC_TON
+    min_sources: 2
+    max_staleness_minutes: 10080
+    outlier_threshold_pct: 7.0
+
+  - id: cotton
+    name: Cotton
+    category: agriculture
+    target_unit: USD_PER_POUND
+    min_sources: 2
+    max_staleness_minutes: 10080
+    outlier_threshold_pct: 7.0
+
+  - id: sugar
+    name: Sugar
+    category: agriculture
+    target_unit: USD_PER_POUND
+    min_sources: 2
+    max_staleness_minutes: 10080
+    outlier_threshold_pct: 7.0
+
+  - id: coffee
+    name: Coffee
+    category: agriculture
+    target_unit: USD_PER_POUND
+    min_sources: 2
+    max_staleness_minutes: 10080
+    outlier_threshold_pct: 7.0

@@ -1,0 +1,55 @@
+# Local stack: API + Postgres + Redis + a collection scheduler/worker.
+# In MVP mode (GPMI_USE_MOCK=1) everything runs on the mock CSV data with no
+# external API keys.
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: gpmi
+      POSTGRES_PASSWORD: gpmi
+      POSTGRES_DB: gpmi
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gpmi"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  app:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg://gpmi:gpmi@postgres:5432/gpmi
+      REDIS_URL: redis://redis:6379/0
+      GPMI_USE_MOCK: "1"
+      GPMI_MOCK_DATA_DIR: /app/data/mock
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      FRED_API_KEY: ${FRED_API_KEY:-}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  scheduler:
+    build: .
+    command: ["python", "-m", "gpmi.jobs.scheduler"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://gpmi:gpmi@postgres:5432/gpmi
+      REDIS_URL: redis://redis:6379/0
+      GPMI_USE_MOCK: "1"
+      GPMI_MOCK_DATA_DIR: /app/data/mock
+      GPMI_INTERVAL_SECONDS: "3600"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:

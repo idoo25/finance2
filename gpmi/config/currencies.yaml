@@ -1,0 +1,13 @@
+# The 10 most-traded currencies by BIS FX turnover survey. These are the
+# *denominator* of the index: GPMI asks how much each asset costs in each.
+currencies:
+  - USD
+  - EUR
+  - JPY
+  - GBP
+  - CNY
+  - CHF
+  - AUD
+  - CAD
+  - HKD
+  - SGD

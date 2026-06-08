@@ -1,0 +1,32 @@
+# Base-date anchor. Every ratio R[p,c,t] = Price[p,c,t] / Price[p,c,base].
+# base_prices_usd are in each asset's target_unit. base_fx are units of the
+# currency per 1 USD on the base date. The base matrix is derived from these.
+base_date: "2026-01-01"
+
+base_prices_usd:
+  gold: 2650.0          # USD / troy ounce
+  silver: 30.0          # USD / troy ounce
+  platinum: 950.0       # USD / troy ounce
+  palladium: 1000.0     # USD / troy ounce
+  copper: 9000.0        # USD / metric ton
+  aluminum: 2400.0      # USD / metric ton
+  wti: 72.0             # USD / barrel
+  brent: 76.0           # USD / barrel
+  natural_gas: 3.0      # USD / MMBtu
+  wheat: 220.0          # USD / metric ton
+  corn: 175.0           # USD / metric ton
+  cotton: 0.70          # USD / pound
+  sugar: 0.21           # USD / pound
+  coffee: 3.20          # USD / pound
+
+base_fx:
+  USD: 1.0
+  EUR: 0.95
+  JPY: 150.0
+  GBP: 0.80
+  CNY: 7.20
+  CHF: 0.90
+  AUD: 1.55
+  CAD: 1.40
+  HKD: 7.80
+  SGD: 1.35

@@ -1,0 +1,18 @@
+thresholds:
+  # Freeze the whole index if fewer than this fraction of asset-currency pairs
+  # are valid in a snapshot.
+  min_valid_pairs_ratio: 0.70
+
+  # FX validation.
+  fx_outlier_threshold_pct: 0.5
+  fx_max_staleness_minutes: 1440
+
+  # If the index moves more than this between snapshots, the publisher should
+  # require a confirmation cycle before publishing.
+  index_jump_confirm_pct: 0.05
+
+  # Freshness buckets (days) used by the quality score / publishing policy.
+  fresh_days: 1
+  valid_daily_days: 3
+  valid_weekly_days: 7
+  reject_days: 14
