@@ -56,7 +56,8 @@ def compute_asset_price(
     price = median([p.price_usd for p in filtered])
     regions = [p.region for p in filtered]
     timestamps = [p.timestamp for p in filtered]
-    status = AssetStatus.OK if len(filtered) >= 3 else AssetStatus.DEGRADED
+    healthy = asset.healthy_sources or asset.min_sources
+    status = AssetStatus.OK if len(filtered) >= healthy else AssetStatus.DEGRADED
     return AssetPrice(
         asset_id=asset.id,
         median_price_usd=price,

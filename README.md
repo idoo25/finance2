@@ -35,31 +35,54 @@ the whole system runs end-to-end offline with no API keys.
 
 ## The universe
 
-**14 MVP assets** (each with ≥2 free sources, ideally ≥2 regions): gold, silver,
-platinum, palladium, copper, aluminum, WTI, Brent, natural gas, wheat, corn,
-cotton, sugar, coffee. Assets without enough independent free feeds (lithium,
-uranium, soybeans, rice, nickel, …) are intentionally excluded until they meet
-the diversity rule.
+**14 MVP assets** (each with 2 independent **keyless** sources — Stooq + Yahoo
+Finance — across 2 regions): gold, silver, platinum, palladium, copper,
+aluminum, WTI, Brent, natural gas, wheat, corn, cotton, sugar, coffee. Assets
+without enough independent free feeds (lithium, uranium, soybeans, rice,
+nickel, …) are intentionally excluded until they meet the diversity rule.
+(Aluminum's 2nd feed is best-effort on Stooq; if absent it simply freezes that
+asset while the rest of the index publishes.)
 
 **10 currencies** (the denominator): USD, EUR, JPY, GBP, CNY, CHF, AUD, CAD,
 HKD, SGD.
 
-## Quick start (offline, no keys)
+## Data sources — 100% free, no API keys
+
+| Source | Type | Covers |
+| ------ | ---- | ------ |
+| **Stooq** | free CSV quotes | metals, energy, agriculture, FX |
+| **Yahoo Finance** | free chart API | metals, energy, agriculture, FX |
+| **ECB** | central-bank reference | FX |
+| **Frankfurter** | keyless API over ECB data | FX |
+
+No keys, no signup. (Optional Alpha Vantage / FRED adapters exist in the code
+for users who want them, but they are **not** in the default config.)
+
+## Quick start
 
 ```bash
 pip install -r requirements.txt
 
-# 1. (re)generate the deterministic mock data
+# ---- Option A: offline mock data (deterministic, the default) ----
 python scripts/generate_mock_data.py
-
-# 2. compute one index snapshot (creates ./gpmi.db)
 python -m gpmi.jobs.compute_index
-#   -> FreeGPMI = 1.044096  status=valid pairs=140/140 quality=0.921
+#   -> FreeGPMI = 1.042462  status=valid pairs=130/140 quality=0.968
+#      (coffee frozen on purpose to demo the stale-source freeze rule)
 
-# 3. serve the API
+# ---- Option B: LIVE keyless data (needs outbound internet) ----
+GPMI_USE_MOCK=0 python scripts/diagnose_sources.py   # see what each source returns
+GPMI_USE_MOCK=0 python -m gpmi.jobs.compute_index     # compute from live data
+
+# ---- serve the API (either mode) ----
 uvicorn gpmi.api.main:app --reload
 #   POST http://localhost:8000/api/v1/compute   then browse /docs
 ```
+
+> **Network note:** live mode needs outbound HTTPS to `stooq.com`,
+> `query1.finance.yahoo.com`, `www.ecb.europa.eu`, `api.frankfurter.dev`. In a
+> restricted/allowlisted environment those are blocked and the index will
+> freeze (gracefully) — run on a machine with open internet, or use mock mode.
+> `python scripts/diagnose_sources.py` prints exactly what each source returns.
 
 ## API
 
@@ -84,7 +107,8 @@ timestamps — the index never pretends data is fresher than it is.
    native unit → the asset's target unit.
 4. Outliers vs. the peer median are dropped (only when ≥3 sources exist).
 5. The asset price is the **median** of the survivors. Fewer than `min_sources`
-   ⇒ the asset is **frozen**.
+   ⇒ the asset is **frozen** (excluded); below `healthy_sources` ⇒ **degraded**
+   (still contributes).
 6. Each asset×currency ratio vs. the base matrix feeds the **geometric mean**.
    If fewer than 70% of pairs are valid ⇒ the whole index is **frozen**.
 
@@ -93,15 +117,16 @@ timestamps — the index never pretends data is fresher than it is.
 Edit the YAML under `gpmi/config/`:
 `assets.yaml`, `currencies.yaml`, `sources.yaml`, `thresholds.yaml`, `base.yaml`.
 
-## MVP vs. production
+## Mock vs. live
 
-- **MVP** (`GPMI_USE_MOCK=1`, the default): mock CSV adapters, no keys, SQLite.
-- **Production** (`GPMI_USE_MOCK=0`): routes to real free adapters. ECB and
-  Frankfurter FX work keyless; Alpha Vantage and FRED activate when their env
-  keys are set; exchange-licensed sources (LBMA, SGE, Euronext, Stooq) are left
-  as documented stubs in `gpmi/adapters/realtime.py` — wire them to your data
-  license or downloaded CSVs. Use Postgres via `DATABASE_URL` and add real
-  migrations. Do not market delayed/free data as a live commercial index.
+- **Mock** (`GPMI_USE_MOCK=1`, the default): deterministic CSV data, fully
+  offline, used by the tests.
+- **Live** (`GPMI_USE_MOCK=0`): keyless adapters (Stooq, Yahoo, ECB,
+  Frankfurter). The remaining exchange-licensed sources (LBMA, SGE, Euronext)
+  are documented stubs in `gpmi/adapters/realtime.py` — optional, for users with
+  a data license. Use Postgres via `DATABASE_URL` and proper migrations for
+  production. Free/delayed data should not be marketed as a live commercial
+  index.
 
 ## Docker
 
@@ -112,5 +137,6 @@ docker compose up --build      # api :8000, postgres, redis, hourly scheduler
 ## Tests
 
 ```bash
-pytest        # 33 tests: units, aggregation, validation, fx, index, rollover, e2e
+pytest        # 44 tests: units, aggregation, validation, fx, normalize,
+              # index, rollover, keyless parsers, end-to-end pipeline + API
 ```

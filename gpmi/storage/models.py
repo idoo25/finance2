@@ -49,7 +49,7 @@ class AssetPriceRow(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     asset_id: Mapped[str] = mapped_column(String(64), index=True)
-    median_price_usd: Mapped[float] = mapped_column(Float)
+    median_price_usd: Mapped[float | None] = mapped_column(Float, nullable=True)
     valid_source_count: Mapped[int] = mapped_column(Integer)
     source_count: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(16))
@@ -62,7 +62,7 @@ class FxRateRow(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     base_currency: Mapped[str] = mapped_column(String(8))
     quote_currency: Mapped[str] = mapped_column(String(8), index=True)
-    rate: Mapped[float] = mapped_column(Float)
+    rate: Mapped[float | None] = mapped_column(Float, nullable=True)
     source_count: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(16))
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
@@ -73,7 +73,7 @@ class IndexValueRow(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     index_name: Mapped[str] = mapped_column(String(32), index=True, default="FreeGPMI")
-    value: Mapped[float] = mapped_column(Float)
+    value: Mapped[float | None] = mapped_column(Float, nullable=True)
     base_date: Mapped[str] = mapped_column(String(16))
     valid_pairs: Mapped[int] = mapped_column(Integer)
     expected_pairs: Mapped[int] = mapped_column(Integer)

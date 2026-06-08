@@ -13,6 +13,7 @@ Runs entirely on the mock CSV adapter in MVP mode, so it works offline.
 from __future__ import annotations
 
 import json
+import math
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
@@ -44,6 +45,13 @@ class SnapshotResult:
     matrix: list[tuple[str, str, float]]
     raws: list[RawPrice]
     normalized: list[NormalizedPrice]
+
+
+def _n(x: float | None) -> float | None:
+    """NaN/inf -> None so non-nullable-free DB columns accept frozen rows."""
+    if x is None or (isinstance(x, float) and not math.isfinite(x)):
+        return None
+    return x
 
 
 def _age_days(ts: datetime, now: datetime) -> float:
@@ -122,7 +130,9 @@ def run_snapshot(config: Config | None = None, *, persist: bool = True,
         oldest = newest = None
         freshness = Freshness.REJECT
 
-    expected_sources = 3
+    expected_sources = max(
+        (a.healthy_sources or a.min_sources) for a in config.assets.values()
+    )
     contributing_assets = [
         ap for ap in asset_prices.values() if ap.status != AssetStatus.FROZEN
     ]
@@ -174,18 +184,18 @@ def _persist(result: SnapshotResult, now: datetime) -> None:
             ))
         for ap in result.asset_prices.values():
             session.add(models.AssetPriceRow(
-                asset_id=ap.asset_id, median_price_usd=ap.median_price_usd,
+                asset_id=ap.asset_id, median_price_usd=_n(ap.median_price_usd),
                 valid_source_count=ap.valid_source_count, source_count=ap.source_count,
                 status=ap.status.value, timestamp=now,
             ))
         for fx in result.fx_rates.values():
             session.add(models.FxRateRow(
-                base_currency=fx.base, quote_currency=fx.quote, rate=fx.rate,
+                base_currency=fx.base, quote_currency=fx.quote, rate=_n(fx.rate),
                 source_count=fx.source_count, status=fx.status.value, timestamp=now,
             ))
         idx = result.index
         session.add(models.IndexValueRow(
-            index_name="FreeGPMI", value=idx.value, base_date=idx.base_date,
+            index_name="FreeGPMI", value=_n(idx.value), base_date=idx.base_date,
             valid_pairs=idx.valid_pairs, expected_pairs=idx.expected_pairs,
             status=idx.status.value, quality_score=idx.quality_score,
             degraded_assets=json.dumps(idx.degraded_assets),

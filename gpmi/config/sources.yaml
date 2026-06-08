@@ -1,62 +1,57 @@
-# Per-asset source lists. The `adapter` names a real free/public data source;
-# in MVP mode (GPMI_USE_MOCK=1, the default) every fetch is served by the mock
-# CSV adapter so the system runs end-to-end with no API keys. Each asset lists
-# >= 2 sources, ideally across >= 2 regions, per the diversity rule.
+# KEYLESS, FREE source lists. Every source here works with NO API key:
+#   * stooq  - free CSV quotes (commodities, metals, FX)
+#   * yahoo  - free Yahoo Finance chart API (commodities, metals, FX)
+#   * ecb / frankfurter - central-bank reference FX (keyless)
+# Each asset has 2 independent providers (Stooq + Yahoo) across 2 regions.
+# In MVP mode (GPMI_USE_MOCK=1, default) the mock CSV adapter serves all of
+# these offline; set GPMI_USE_MOCK=0 to pull live keyless data.
 sources:
   gold:
-    - {id: lbma_gold,        adapter: lbma,          region: UK, type: benchmark}
-    - {id: sge_gold,         adapter: sge,           region: CN, type: exchange_benchmark}
-    - {id: stooq_gold,       adapter: stooq,         region: PL, type: delayed}
-    - {id: av_gold,          adapter: alpha_vantage, region: US, type: api}
+    - {id: stooq_gold,       adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_gold,       adapter: yahoo, region: US, type: delayed}
   silver:
-    - {id: lbma_silver,      adapter: lbma,          region: UK, type: benchmark}
-    - {id: sge_silver,       adapter: sge,           region: CN, type: exchange_benchmark}
-    - {id: stooq_silver,     adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_silver,     adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_silver,     adapter: yahoo, region: US, type: delayed}
   platinum:
-    - {id: lbma_platinum,    adapter: lbma,          region: UK, type: benchmark}
-    - {id: stooq_platinum,   adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_platinum,   adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_platinum,   adapter: yahoo, region: US, type: delayed}
   palladium:
-    - {id: lbma_palladium,   adapter: lbma,          region: UK, type: benchmark}
-    - {id: stooq_palladium,  adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_palladium,  adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_palladium,  adapter: yahoo, region: US, type: delayed}
   copper:
-    - {id: av_copper,        adapter: alpha_vantage, region: US, type: api}
-    - {id: stooq_copper,     adapter: stooq,         region: PL, type: delayed}
-    - {id: fred_copper,      adapter: fred,          region: US, type: api}
+    - {id: stooq_copper,     adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_copper,     adapter: yahoo, region: US, type: delayed}
   aluminum:
-    - {id: av_aluminum,      adapter: alpha_vantage, region: US, type: api}
-    - {id: stooq_aluminum,   adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_aluminum,   adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_aluminum,   adapter: yahoo, region: US, type: delayed}
   wti:
-    - {id: av_wti,           adapter: alpha_vantage, region: US, type: api}
-    - {id: fred_wti,         adapter: fred,          region: US, type: api}
-    - {id: stooq_wti,        adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_wti,        adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_wti,        adapter: yahoo, region: US, type: delayed}
   brent:
-    - {id: av_brent,         adapter: alpha_vantage, region: US, type: api}
-    - {id: fred_brent,       adapter: fred,          region: US, type: api}
-    - {id: stooq_brent,      adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_brent,      adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_brent,      adapter: yahoo, region: US, type: delayed}
   natural_gas:
-    - {id: av_natgas,        adapter: alpha_vantage, region: US, type: api}
-    - {id: fred_natgas,      adapter: fred,          region: US, type: api}
+    - {id: stooq_natgas,     adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_natgas,     adapter: yahoo, region: US, type: delayed}
   wheat:
-    - {id: av_wheat,         adapter: alpha_vantage, region: US, type: api}
-    - {id: euronext_wheat,   adapter: euronext,      region: EU, type: futures}
-    - {id: stooq_wheat,      adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_wheat,      adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_wheat,      adapter: yahoo, region: US, type: delayed}
   corn:
-    - {id: av_corn,          adapter: alpha_vantage, region: US, type: api}
-    - {id: euronext_corn,    adapter: euronext,      region: EU, type: futures}
-    - {id: stooq_corn,       adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_corn,       adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_corn,       adapter: yahoo, region: US, type: delayed}
   cotton:
-    - {id: av_cotton,        adapter: alpha_vantage, region: US, type: api}
-    - {id: stooq_cotton,     adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_cotton,     adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_cotton,     adapter: yahoo, region: US, type: delayed}
   sugar:
-    - {id: av_sugar,         adapter: alpha_vantage, region: US, type: api}
-    - {id: stooq_sugar,      adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_sugar,      adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_sugar,      adapter: yahoo, region: US, type: delayed}
   coffee:
-    - {id: av_coffee,        adapter: alpha_vantage, region: US, type: api}
-    - {id: stooq_coffee,     adapter: stooq,         region: PL, type: delayed}
+    - {id: stooq_coffee,     adapter: stooq, region: PL, type: delayed}
+    - {id: yahoo_coffee,     adapter: yahoo, region: US, type: delayed}
 
-# FX sources are shared across all currency pairs.
+# FX sources shared across all currency pairs (all keyless).
 fx_sources:
-  - {id: ecb,         adapter: ecb,           region: EU, type: official}
-  - {id: frankfurter, adapter: frankfurter,   region: EU, type: api}
-  - {id: stooq_fx,    adapter: stooq,         region: PL, type: delayed}
-  - {id: av_fx,       adapter: alpha_vantage, region: US, type: api}
+  - {id: ecb,          adapter: ecb,         region: EU, type: official}
+  - {id: frankfurter,  adapter: frankfurter, region: EU, type: api}
+  - {id: stooq_fx,     adapter: stooq,       region: PL, type: delayed}
+  - {id: yahoo_fx,     adapter: yahoo,       region: US, type: delayed}

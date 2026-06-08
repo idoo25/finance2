@@ -25,6 +25,9 @@ class AssetConfig:
     symbol: str | None = None
     commodity: str | None = None  # used for bushel conversions
     min_sources: int = 2
+    # Below healthy_sources (but >= min_sources) an asset is "degraded" but still
+    # contributes. Defaults to min_sources, so meeting the floor reads as OK.
+    healthy_sources: int | None = None
     max_staleness_minutes: float = 60.0
     outlier_threshold_pct: float = 3.0
 

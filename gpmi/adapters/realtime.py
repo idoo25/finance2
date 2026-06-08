@@ -221,5 +221,12 @@ def build(name: str):
     builder = _BUILDERS.get(name)
     if builder:
         return builder()
-    # stooq, lbma, sge, euronext: wire to your data license / CSVs.
+    # keyless Stooq / Yahoo adapters
+    from .keyless import StooqAdapter, YahooAdapter
+
+    if name == "stooq":
+        return StooqAdapter()
+    if name == "yahoo":
+        return YahooAdapter()
+    # lbma, sge, euronext: wire to your data license / CSVs.
     return NullAdapter(name)
